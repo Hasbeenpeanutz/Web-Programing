@@ -9,7 +9,7 @@ async function loadBookList() {
 
     try {
         // simulate network delay so the loading indicator is visible
-        await new Promise((resolve) => setTimeout(resolve, 600));
+        await new Promise((resolve) => setTimeout(resolve, 3000));
 
         const res = await fetch("../data/books.json");
         if (!res.ok) {
@@ -20,20 +20,21 @@ async function loadBookList() {
         books.forEach(function (book) {
             const tr = document.createElement("tr");
             tr.innerHTML =
-                "<td>" + book.title + "</td>" +
-                "<td>" + book.author + "</td>" +
-                "<td>" + book.year + "</td>" +
-                "<td>" + book.stock + "</td>" +
-                "<td>" +
-                "<button type=\"button\" class=\"edit-button\">Edit</button> " +
-                "<button type=\"button\" class=\"details-button\">Details</button> " +
-                "<button type=\"button\" class=\"btn-delete\">Delete</button>" +
-                "</td>";
+            "<td>" + book.title + "</td>" +
+            "<td>" + book.author + "</td>" +
+            "<td>" + book.year + "</td>" +
+            "<td>" + book.stock + "</td>" +
+            "<td>" + book.category + "</td>" +
+            "<td>" +
+            "<button type=\"button\" class=\"edit-button\">Edit</button>" +
+            "<button type=\"button\" class=\"details-button\">Details</button>" +
+            "<button type=\"button\" class=\"btn-delete\">Delete</button>" +
+            "</td>";
             tbody.appendChild(tr);
         });
     } catch (err) {
         tbody.innerHTML =
-            "<tr><td colspan=\"5\">Failed to load data: " + err.message + "</td></tr>";
+            "<tr><td colspan=\"6\">Failed to load data: " + err.message + "</td></tr>";
     } finally {
         loading.style.display = "none";
     }
