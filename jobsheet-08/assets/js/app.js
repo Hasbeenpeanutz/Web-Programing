@@ -30,6 +30,7 @@ function initDeleteConfirm() {
 // ===== Real-time table filter/search =====
 function initTableFilter() {
     const input = document.getElementById("search-input");
+    if (input && input.closest("#server-search-form")) return;
     const table = document.querySelector(".table-responsive table");
     if (!input || !table) return;
 

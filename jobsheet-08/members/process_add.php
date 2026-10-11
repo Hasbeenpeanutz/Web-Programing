@@ -89,30 +89,35 @@ $stmt = $pdo->prepare(
 );
 
 
-$stmt->execute([
 
-    'name' => $name,
+try {
+    $stmt->execute([
+        'name' => $name,
+        'member_id' => $memberId,
+        'address' => $address,
+        'phone' => $phone
+    ]);
 
-    'member_id' => $memberId,
+    $_SESSION['flash'] = [
+        'type' => 'success',
+        'message' => 'Member added successfully.'
+    ];
 
-    'address' => $address,
+} catch (PDOException $e) {
+    if ($e->getCode() === '23505') {
+        $_SESSION['flash'] = [
+            'type' => 'error',
+            'message' => 'Member ID already in use. Please use a different ID.'
+        ];
+    } else {
+        error_log($e->getMessage());
 
-    'phone' => $phone
-
-]);
-
-
-/* Flash message */
-
-$_SESSION['flash'] = [
-
-    'type' => 'success',
-
-    'message' =>
-        'Member added successfully.'
-
-];
-
+        $_SESSION['flash'] = [
+            'type' => 'error',
+            'message' => 'Unable to save member. Please try again.'
+        ];
+    }
+}
 
 /* Redirect */
 

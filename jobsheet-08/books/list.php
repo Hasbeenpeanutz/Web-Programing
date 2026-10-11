@@ -11,13 +11,31 @@ $flash = $_SESSION['flash'] ?? null;
 
 unset($_SESSION['flash']);
 
-$books = $pdo
-    ->query(
+
+$keyword = trim($_GET['keyword'] ?? '');
+
+if ($keyword !== '') {
+    $stmt = $pdo->prepare(
         "SELECT *
          FROM books
+         WHERE title ILIKE :keyword
          ORDER BY id DESC"
-    )
-    ->fetchAll(PDO::FETCH_ASSOC);
+    );
+
+    $stmt->execute([
+        'keyword' => '%' . $keyword . '%'
+    ]);
+
+    $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    $books = $pdo
+        ->query(
+            "SELECT *
+             FROM books
+             ORDER BY id DESC"
+        )
+        ->fetchAll(PDO::FETCH_ASSOC);
+}
 
 ?>
 
@@ -38,19 +56,23 @@ $books = $pdo
     <?php endif; ?>
 
 
-    <div class="search-box">
 
-        <label for="search-input">
-            Search Book Title
-        </label>
+    <form method="get" action="list.php" class="search-box" id="server-search-form">
+        <label for="search-input">Search Book Title</label>
 
         <input
             type="text"
             id="search-input"
+            name="keyword"
             placeholder="Type book title..."
-        >
+            value="<?php echo htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8'); ?>">
 
-    </div>
+        <button type="submit">Search</button>
+
+        <?php if ($keyword !== ''): ?>
+            <a href="list.php">Clear Search</a>
+        <?php endif; ?>
+    </form>
 
 
     <div class="table-responsive">
@@ -69,6 +91,8 @@ $books = $pdo
 
                     <th>Stock</th>
 
+                    <th>Date Added</th>
+
                     <th>Action</th>
 
                 </tr>
@@ -82,7 +106,7 @@ $books = $pdo
 
                     <tr>
 
-                        <td colspan="5">
+                        <td colspan="6">
 
                             No book data yet.
                             Please add one via the
@@ -115,6 +139,14 @@ $books = $pdo
                             </td>
 
                             <td>
+                                <?php
+                                echo !empty($book['date_added'])
+                                    ? htmlspecialchars($book['date_added'])
+                                    : '-';
+                                ?>
+                            </td>
+
+                            <td>
 
                                 <button type="button">
                                     Edit
@@ -122,8 +154,7 @@ $books = $pdo
 
                                 <button
                                     type="button"
-                                    class="btn-delete"
-                                >
+                                    class="btn-delete">
                                     Delete
                                 </button>
 
