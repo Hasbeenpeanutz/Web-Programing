@@ -1,7 +1,4 @@
--- Jobsheet 8: initial schema for the simpus_mini database (PostgreSQL)
--- Run this after creating the database, e.g.:
---   createdb simpus_mini
---   psql -d simpus_mini -f sql/01_books_members.sql
+select current_database();
 
 CREATE TABLE IF NOT EXISTS books (
     id SERIAL PRIMARY KEY,
@@ -20,3 +17,8 @@ CREATE TABLE IF NOT EXISTS members (
     address VARCHAR(255),
     phone VARCHAR(30)
 );
+
+select * from books;
+
+ALTER TABLE books
+ADD COLUMN IF NOT EXISTS date_added TIMESTAMP DEFAULT NOW();
